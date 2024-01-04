@@ -1,0 +1,6 @@
+down-env/
+__pycache__/
+images/
+main.spec
+dist/
+build/
