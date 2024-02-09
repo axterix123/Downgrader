@@ -117,7 +117,8 @@ def convert_vissim(path_input, path_output):
         tag_model2D3DSegment.attrib.pop('partWOutPassFront', None)
         tag_model2D3DSegment.attrib.pop('partWOutPassRear', None)
         tag_model2D3DSegment.attrib['file3D'] = tag_model2D3DSegment.attrib['file3D'].replace('.fbx','.v3d')
-
+        if tag_model2D3DSegment.attrib['file3D'][:6] == '#data#':
+            tag_model2D3DSegment.attrib['file3D'] = tag_model2D3DSegment.attrib['file3D'][6:]
 
     tag_netPara = network.find('./netPara')
     tag_netPara.attrib['databFilename'] = ""
@@ -151,3 +152,54 @@ def convert_vissim(path_input, path_output):
             del tag_vehileRouteStatic.attrib['formula']
 
     tree.write(path_output, encoding='utf-8', xml_declaration=True)
+
+def convert_vissim_24(path_input, path_output) -> None:
+    """ Downgrade from Vissim.24 to Vissim.100 """
+
+    tree = ET.parse(path_input)
+    network = tree.getroot()
+
+    network.attrib['version'] = '1204'
+    network.attrib['vissimVersion'] = '2024.00-04 [272727]'
+
+    try:
+        for tag_backgroundImage in network.findall('./backgroundImages/backgroundImage'):
+            if tag_backgroundImage.attrib['pathFilename'][:6] == '#data#':
+                tag_backgroundImage.attrib['pathFilename'] = tag_backgroundImage['pathFilename'][6:]
+                del tag_backgroundImage.attrib['type']
+            tag_coordBL = tag_backgroundImage.find('./coordBL')
+            tag_coordBL.tag = 'posBL'
+            tag_coordTR = tag_backgroundImage.find('./coordTR')
+            tag_coordTR.tag = 'posTR'
+    except: pass
+
+    try:
+        for tag_conflictArea in network.findall('./conflictAreas/conflictArea'):
+            linkA_value = tag_conflictArea.get('linkA')
+            tag_conflictArea.set("link1",linkA_value)
+            tag_conflictArea.attrib.pop('linkA', None)
+
+            linkB_value = tag_conflictArea.get('linkB')
+            tag_conflictArea.set("link2",linkB_value)
+            tag_conflictArea.attrib.pop('linkB', None)
+
+            visibLinkA = tag_conflictArea.get('visibLinkA')
+            tag_conflictArea.set("visibLink1",visibLinkA)
+            tag_conflictArea.attrib.pop('visibLinkA', None)
+
+            visibLinkB = tag_conflictArea.get('visibLinkB')
+            tag_conflictArea.set("visibLink2",visibLinkB)
+            tag_conflictArea.attrib.pop('visibLinkB', None)
+
+            tag_conflictArea.attrib.pop('conflTypDetmAuto', None)
+            tag_conflictArea.attrib.pop('conflTypMan', None)
+    except: pass
+
+    try:
+        pass
+    except: pass
+
+#<displayType allSidesSame="false" anisoFilt="true" borderColor="ff808080" borderLineStyle="SOLIDLINE" curved="false" fillColor="46000000" fillStyle="SOLIDFILL" invisible="false" name="Via" no="1" noMipmap="false" rail="false" railFlangeHgt="0.013" railFlangeWid="0.15" railGauge="1.435" railHeadHgt="0.043" railHeadWid="0.073" railHgt="0.172" railType="STANDARD" railWebWid="0.016" texHorizLen="1" textureFilename="" tiesHgt="0.02" tiesLen="2.6" tiesSpac="0.6" tiesTexFilename="" tiesTexHorizLen="1" tiesType="STANDARD" tiesWid="0.26"/>
+#<displayType allSidesSame="false" anisoFilt="true" borderColor="ff808080" borderLineStyle="SOLIDLINE" curved="false" fillColor="ff000000" fillStyle="SOLIDFILL" invisible="false" name="Via" no="1" noMipmap="false" rail="false" railFlangeHgt="0.013" railFlangeWid="0.15" railGauge="1.435" railHeadHgt="0.043" railHeadWid="0.073" railHgt="0.172" railType="STANDARD" railWebWid="0.016" texHorizLen="1" textureFilename="" tiesHgt="0.02" tiesLen="2.6" tiesSpac="0.6" tiesTexFilename="" tiesTexHorizLen="1" tiesType="STANDARD" tiesWid="0.26"/>
+#Delete:
+#drawOrder3D="MID
