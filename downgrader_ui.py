@@ -52,9 +52,12 @@ class Ui_MainWindow(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(30, 90, 451, 87))
+        self.textEdit.setGeometry(QtCore.QRect(30, 100, 451, 87))
         self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(390, 70, 93, 28))
+        self.pushButton_3.setObjectName("pushButton_3")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -64,6 +67,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Downgrader"))
         self.pushButton.setText(_translate("MainWindow", "Open File"))
-        self.pushButton_2.setText(_translate("MainWindow", "Convert"))
+        self.pushButton_2.setText(_translate("MainWindow", "v23 to v10"))
         self.label.setText(_translate("MainWindow", "ESTADO:"))
         self.label_2.setText(_translate("MainWindow", "Instructions: Find the .inpx file and pulse \'Convert\'"))
+        self.pushButton_3.setText(_translate("MainWindow", "v24 to v10"))
