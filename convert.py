@@ -130,6 +130,10 @@ def convert_vissim_23(path_input, path_output) -> None:
         tag_node.attrib.pop('allowRecr', None)
         tag_node.attrib.pop('mesoPenalMerg', None)
 
+    tag_signalControllers = network.find('./signalControllers')
+    if tag_signalControllers is not None:
+        network.remove(tag_signalControllers)
+
     for tag_reducedSpedArea in network.findall('./reducedSpeedAreas/reducedSpeedArea'):
         tag_reducedSpedArea.attrib['timeTo'] = str(min(99999, int(tag_reducedSpedArea.attrib['timeTo'])))
 
