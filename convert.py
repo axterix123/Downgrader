@@ -157,8 +157,8 @@ def convert_vissim_24(path_input, path_output) -> None:
     tree = ET.parse(path_input)
     network = tree.getroot()
 
-    network.attrib['version'] = '1204'
-    network.attrib['vissimVersion'] = '2024.00-04 [272727]'
+    network.attrib['version'] = '503'
+    network.attrib['vissimVersion'] = '10.00 - 16 [79178]'
 
     try:
         for tag_backgroundImage in network.findall('./backgroundImages/backgroundImage'):
