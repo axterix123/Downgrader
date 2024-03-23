@@ -332,9 +332,9 @@ def convert_vissim_24(path_input, path_output) -> None:
     except: pass
 
     try:
-        for tag_signalHeads in network.find('./signalHeads'):
-            if tag_signalHeads is not None:
-                network.remove(tag_signalHeads)
+        tag_signalHeads = network.find('./signalHeads')
+        if tag_signalHeads is not None:
+            network.remove(tag_signalHeads)
     except: pass
 
     try:
