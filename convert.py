@@ -167,8 +167,10 @@ def convert_vissim_24(path_input, path_output) -> None:
     try:
         for tag_backgroundImage in network.findall('./backgroundImages/backgroundImage'):
             if tag_backgroundImage.attrib['pathFilename'][:6] == '#data#':
-                tag_backgroundImage.attrib['pathFilename'] = tag_backgroundImage['pathFilename'][6:]
+                tag_backgroundImage.attrib['pathFilename'] = tag_backgroundImage.attrib['pathFilename'][6:]
                 del tag_backgroundImage.attrib['type']
+            if '.-' in tag_backgroundImage.attrib['pathFilename']:
+                tag_backgroundImage.attrib['pathFilename'] = tag_backgroundImage.attrib['pathFilename'].replace('.-', '.')
             tag_coordBL = tag_backgroundImage.find('./coordBL')
             tag_coordBL.tag = 'posBL'
             tag_coordTR = tag_backgroundImage.find('./coordTR')
