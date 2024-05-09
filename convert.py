@@ -160,7 +160,6 @@ def convert_vissim_24(path_input, path_output) -> None:
 
     tree = ET.parse(path_input)
     network = tree.getroot()
-
     network.attrib['version'] = '503'
     network.attrib['vissimVersion'] = '10.00 - 16 [79178]'
 
@@ -173,7 +172,7 @@ def convert_vissim_24(path_input, path_output) -> None:
             tag_coordBL.tag = 'posBL'
             tag_coordTR = tag_backgroundImage.find('./coordTR')
             tag_coordTR.tag = 'posTR'
-    except: pass
+    except Exception as e: raise print("Error backgroundImage:", e)
 
     try:
         for tag_conflictArea in network.findall('./conflictAreas/conflictArea'):
@@ -200,7 +199,7 @@ def convert_vissim_24(path_input, path_output) -> None:
 
             del tag_conflictArea.attrib['conflTypDetmAuto']
             del tag_conflictArea.attrib['conflTypMan']
-    except: pass
+    except Exception as e: raise print("Error conflictAreas:", e)
 
     for tag_displayTypes in network.findall('./displayTypes/displayType'):
         del tag_displayTypes.attrib['drawOrder3D']
@@ -232,7 +231,7 @@ def convert_vissim_24(path_input, path_output) -> None:
             d = {k: tag_drivingBehavior.attrib[k] for k in sorted(tag_drivingBehavior.attrib)}
             tag_drivingBehavior.attrib.clear()
             tag_drivingBehavior.attrib.update(d)
-    except: pass
+    except Exception as e: raise print("Error drivingBehavior:", e)
 
     try:
         tag_evaluation = network.find('./evaluation')
@@ -255,16 +254,16 @@ def convert_vissim_24(path_input, path_output) -> None:
         del tag_ssam.attrib['toTime']
         tag_vehInps = tag_evaluation.find('./vehInps')
         tag_evaluation.remove(tag_vehInps)
-    except: pass
+    except Exception as e: raise print("Error evaluation:", e)
 
     try:
         tag_laneMarkingTypes = network.find('./laneMarkingTypes')
         if tag_laneMarkingTypes is not None:
             network.remove(tag_laneMarkingTypes)
-    except: pass
+    except Exception as e: raise print("Error laneMarkingTypes:", e)
 
     try:
-        for tag_link in network.find('./links/link'):
+        for tag_link in network.findall('./links/link'):
             del tag_link.attrib['consVehInDynPot']
             del tag_link.attrib['desSpeedFact']
             tag_link.attrib.pop('emiCalcAct', None)
@@ -284,7 +283,7 @@ def convert_vissim_24(path_input, path_output) -> None:
 
             for tag_lane in tag_link.findall('./lanes/lane'):
                 tag_lane.attrib.pop('markingType', None)
-    except: pass
+    except Exception as e: print("Error links:", e)
 
     try:
         for tag_model2D3DSegment in network.findall('./models2D3D/model2D3D/model2D3DSegs/model2D3DSegment'):
@@ -294,7 +293,7 @@ def convert_vissim_24(path_input, path_output) -> None:
             tag_model2D3DSegment.attrib['file3D'] = tag_model2D3DSegment.attrib['file3D'].replace('.fbx','.v3d')
             if tag_model2D3DSegment.attrib['file3D'][:6] == '#data#':
                 tag_model2D3DSegment.attrib['file3D'] = tag_model2D3DSegment.attrib['file3D'][6:]
-    except: pass
+    except Exception as e: raise  print("Error models2D3D:", e)
 
     try:
         tag_netPara = network.find('./netPara')
@@ -304,48 +303,47 @@ def convert_vissim_24(path_input, path_output) -> None:
         d = {k: tag_netPara.attrib[k] for k in sorted(tag_netPara.attrib)}
         tag_netPara.attrib.clear()
         tag_netPara.attrib.update(d)
-    except: pass
+    except Exception as e: raise print("Error netPara:", e)
 
     try:
         for tag_node in network.findall('./nodes/node'):
             tag_node.attrib.pop('allowRecr', None)
             tag_node.attrib.pop('mesoPenalMerg', None)
-    except: pass
+    except Exception as e: raise print("Error nodes:", e)
 
     try:
         tag_parkingLots = network.find('parkingLots')
         if tag_parkingLots is not None:
             network.remove(tag_parkingLots)
-    except: pass
+    except Exception as e: raise print("Error parkingLots:", e)
 
     try:
         for tag_pavementMarking in network.findall('./pavementMarkings/pavementMarking'):
             tag_pavementMarking.attrib.pop('texFile', None)
             tag_pavementMarking.attrib.pop('width', None)
-    except: pass
+    except Exception as e: raise print("Error pavementMarkings:", e)
 
     try:
         for tag_reducedSpeedArea in network.findall('./reducedSpeedAreas/reducedSpeedArea'):
             tag_reducedSpeedArea.attrib['timeTo'] = str(min(99999, int(tag_reducedSpeedArea.attrib['timeTo']))) 
-    except:
-        pass
+    except Exception as e: raise print("Error reducedSpeedAreas:",e)
 
     try:
         tag_signalControllers = network.find('./signalControllers')
         if tag_signalControllers is not None:
             network.remove(tag_signalControllers)
-    except: pass
+    except Exception as e: print("Error signalControllers:", e)
 
     try:
         tag_signalHeads = network.find('./signalHeads')
         if tag_signalHeads is not None:
             network.remove(tag_signalHeads)
-    except: pass
+    except Exception as e: print("Error signalHeads:", e)
 
     try:
         for tag_userDefinedAttribute in network.findall('./userDefinedAttributes/userDefinedAttribute'):
             del tag_userDefinedAttribute.attrib['canBeEmpty']
-    except: pass
+    except Exception as e: print("Error userDefinedAttributes", e)
 
     #Falta analizar los vehicleRoutingDecisionsParking en el V10
 
@@ -354,16 +352,18 @@ def convert_vissim_24(path_input, path_output) -> None:
             del tag_vehicleRoutingDecisionStatic.attrib['routeChoiceMeth']
             for tag_vehicleRouteStatic in tag_vehicleRoutingDecisionStatic.findall('./vehRoutSta/vehicleRouteStatic'):
                 del tag_vehicleRouteStatic.attrib['formula']
-    except: pass
+    except Exception as e: print("Error vehicleRoutingDecisionsStatic:", e)
 
     try:
         for tag_vehicleType in network.findall('./vehicleTypes/vehicleType'):
-            tag_vehicleType.attrib['clearTm'] = tag_vehicleType.attrib['clearTmPt']
-            del tag_vehicleType.attrib['clearTmPt']
+            try:
+                tag_vehicleType.attrib['clearTm'] = tag_vehicleType.attrib['clearTmPt']
+                del tag_vehicleType.attrib['clearTmPt']
+            except: pass
 
             d = {k: tag_vehicleType.attrib[k] for k in sorted(tag_vehicleType.attrib)}
             tag_vehicleType.attrib.clear()
             tag_vehicleType.attrib.update(d)
-    except: pass
+    except Exception as e: print("Error vehicleTypes:", e)
 
     tree.write(path_output, encoding='utf-8', xml_declaration=True)
