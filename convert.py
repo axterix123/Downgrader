@@ -167,7 +167,7 @@ def convert_vissim_24(path_input, path_output) -> None:
     try:
         for tag_backgroundImage in network.findall('./backgroundImages/backgroundImage'):
             if tag_backgroundImage.attrib['pathFilename'][:6] == '#data#':
-                tag_backgroundImage.attrib['pathFilename'] = tag_backgroundImage['pathFilename'][6:]
+                tag_backgroundImage.attrib['pathFilename'] = tag_backgroundImage.attrib['pathFilename'][6:]
                 del tag_backgroundImage.attrib['type']
             tag_coordBL = tag_backgroundImage.find('./coordBL')
             tag_coordBL.tag = 'posBL'
@@ -192,6 +192,11 @@ def convert_vissim_24(path_input, path_output) -> None:
             visibLinkB = tag_conflictArea.get('visibLinkB')
             tag_conflictArea.set("visibLink2",visibLinkB)
             tag_conflictArea.attrib.pop('visibLinkB', None)
+
+            if tag_conflictArea.attrib['status'] == 'AHASRIGHTOFWAY':
+                tag_conflictArea.attrib['status'] = 'TWOYIELDSONE'
+            if tag_conflictArea.attrib['status'] == 'BHASRIGHTOFWAY':
+                tag_conflictArea.attrib['status'] = 'ONEYIELDSTWO'
 
             del tag_conflictArea.attrib['conflTypDetmAuto']
             del tag_conflictArea.attrib['conflTypMan']
