@@ -17,7 +17,6 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.convert_23to10)
         self.ui.pushButton_3.clicked.connect(self.convert_24to10)
 
-
     def open_file(self):
         self.path_files = QFileDialog.getOpenFileNames(self,"Seleccionar Archivo .inpx",directory="c:\\", filter="*.inpx")[0]
         if isinstance(self.path_files,list):
@@ -35,7 +34,7 @@ class MainWindow(QMainWindow):
             final_file = os.path.join(route,name)
             try:
                 convert_vissim_23(file,final_file)
-                self.ui.textEdit.setText(f"Archivo procesado:\n{name}")
+                self.ui.textEdit.setText(f"Archivo procesado:\n{name}\nSe recomienda utilizar los .sig")
             except:
                 return self.ui.textEdit.setText(f"Error al procesar el archivo:\n->{name}\nPosiblemente este en v10")
     
@@ -46,9 +45,9 @@ class MainWindow(QMainWindow):
             final_file = os.path.join(route,name)
             try:
                 convert_vissim_24(file,final_file)
-                self.ui.textEdit.setText(f"Archivo procesado:\n{name}")
-            except:
-                return self.ui.textEdit.setText(f"Error al procesar el archivo:\n->{name}\nPosiblemente este en v10")
+                self.ui.textEdit.setText(f"Archivo procesado:\n{name}\nSe recomienda utilizar los .sig")
+            except Exception as e:
+                return self.ui.textEdit.setText(e)
 
 def main():
     app = QApplication([])

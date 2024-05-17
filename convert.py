@@ -312,10 +312,14 @@ def convert_vissim_24(path_input, path_output) -> None:
     except Exception as e: raise print("Error nodes:", e)
 
     try:
-        tag_parkingLots = network.find('parkingLots')
-        if tag_parkingLots is not None:
-            network.remove(tag_parkingLots)
-    except Exception as e: raise print("Error parkingLots:", e)
+        for tag_parkingLot in network.findall('./parkingLots/parkingLot'):
+            del tag_parkingLot.attrib['destGrp']
+            del tag_parkingLot.attrib['speedForw']
+            tag_parkingLot.attrib.pop['group', "0"]
+            d = {k: tag_parkingLot.attrib[k] for k in sorted(tag_parkingLot.attrib)}
+            tag_parkingLot.attrib.clear()
+            tag_parkingLot.attrib.update(d)
+    except Exception as e: raise print("Error parkingLot: ", e)
 
     try:
         for tag_pavementMarking in network.findall('./pavementMarkings/pavementMarking'):
@@ -329,17 +333,25 @@ def convert_vissim_24(path_input, path_output) -> None:
     except Exception as e: raise print("Error reducedSpeedAreas:",e)
 
     try:
-        tag_signalControllers = network.find('./signalControllers')
-        if tag_signalControllers is not None:
-            network.remove(tag_signalControllers)
+        for signalController in network.findall("./signalControllers/signalController"):
+            del signalController.attrib['intSupplyData']
+            nameSignalController = signalController.attrib['name']
+            signalController.attrib['supplyFile2'] = f"#data#{nameSignalController}.sig"
+
+            rampMeterPara = signalController.find("./rampMeterPara")
+            if rampMeterPara is not None:
+                signalController.remove(rampMeterPara)
+
+            signalGroup = signalController.findall("./sgs/signalGroup")
+            del signalGroup.attrib['actuationType']
+            del signalGroup.attrib['callDetPortNo']
+            del signalGroup.attrib['chkOutDetPortNo']
+            del signalGroup.attrib['clearTm']
+            del signalGroup.attrib['endGreen']
+            del signalGroup.attrib['endRed']
+            del signalGroup.attrib['maxGreen']
     except Exception as e: print("Error signalControllers:", e)
-
-    try:
-        tag_signalHeads = network.find('./signalHeads')
-        if tag_signalHeads is not None:
-            network.remove(tag_signalHeads)
-    except Exception as e: print("Error signalHeads:", e)
-
+        
     try:
         for tag_userDefinedAttribute in network.findall('./userDefinedAttributes/userDefinedAttribute'):
             del tag_userDefinedAttribute.attrib['canBeEmpty']
